@@ -118,4 +118,4 @@ P/S : Tested on Breadboard, the issue on debugging health mostly come from Wirin
 
 ## License
 
-This project is open-source and released under the [MIT License](LICENSE).
+This project is open-source and released under the [MIT License](https://mit-license.org/).
