@@ -1,4 +1,4 @@
-# LoRa Receiver with ESP32-S3
+# LoRa-RX : Receiver with ESP32-S3
 ## Module use :
 ### 1. ESP32-S3-N16R8
 ![WhatsApp Image 2025-05-11 at 23 16 03_c43a9188](https://github.com/user-attachments/assets/7a96e4a9-bcb0-421e-bf54-0e8a605342a3)
