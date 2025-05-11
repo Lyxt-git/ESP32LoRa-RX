@@ -4,11 +4,20 @@ This project implements a simple LoRa receiver using the ESP32-S3 microcontrolle
 
 ## Features
 
+### Old Features
 - Custom pin mapping for the ESP32-S3 GPIO pins.
 - Receives LoRa messages from the transmitter and prints them to the Serial Monitor.
 - Displays received signal strength (RSSI) for each packet.
 - GPIO diagnostic function to check the status of the LoRa pins.
 - SPI communication test to ensure the LoRa module is working properly.
+
+### New Features
+- **Smart LoRa OpMode Tracking**: Detects and reports changes in SX127x state (SLEEP, STANDBY, RX, TX).
+- **Improved SPI Health Check**: Actively tests SPI by sending a known byte (0xAA) and reporting feedback.
+- **Cleaner Serial Output**: Status messages are printed only on change, eliminating repeated logs.
+- **GPIO Preconditioning**: Uses `INPUT_PULLDOWN` to stabilize lines and prevent false readings.
+- **Code Refactor**: Organized functions for GPIO configuration, diagnostics, and SPI tests.
+- **Faster Packet Loop**: Reduced delay between reads for quicker reaction to incoming LoRa messages.
 
 ## Hardware Requirements
 
