@@ -87,7 +87,7 @@ This project uses the following custom pin mappings for the LoRa module:
 - If the receiver isn't picking up packets, ensure that the transmitter is sending on the same frequency (433 MHz in this case).
 - If the RSSI value is low, ensure that the antenna is properly connected and the devices are within range of each other.
 
-#Output sample based on some message and debugging.
+# Output sample based on some message and debugging.
 
 - === Booting LoRa Receiver ===
 - SCK pin is LOW (expected).
