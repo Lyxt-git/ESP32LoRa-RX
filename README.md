@@ -100,7 +100,7 @@ This project uses the following custom pin mappings for the LoRa module:
 - Sent: 0xAA | Received: 0x49
 - SPI communication looks active.
 - LoRa is in STANDBY (idle between receives).
-- Received packet: Hello  ESP32-S3Central  RSSI: -50
+- Received packet: Hello  ESP32-S3Central  RSSI: -50                        << This output line star came from Transmitterwith RSSI
 - Received packet: I am your servant now  RSSI: -51
 - Received packet: This message come from us, the ESP32-S3Rogue  RSSI: -61
 - Received packet: Assalamualaikum  RSSI: -52
