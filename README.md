@@ -83,7 +83,7 @@ This project uses the following custom pin mappings for the LoRa module:
 
 #Output sample based on some message and debugging.
 
-=== Booting LoRa Receiver ===
+- === Booting LoRa Receiver ===
 - SCK pin is LOW (expected).
 - MISO pin is HIGH (may be floating).     << This Could be Floating or Wiring Issue (My breadboard old)
 - MOSI pin is LOW (expected).
