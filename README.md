@@ -4,7 +4,7 @@ This project implements a simple LoRa receiver using the ESP32-S3 microcontrolle
 
 ## Features
 
-### Old Features
+### Initial Features
 - Custom pin mapping for the ESP32-S3 GPIO pins.
 - Receives LoRa messages from the transmitter and prints them to the Serial Monitor.
 - Displays received signal strength (RSSI) for each packet.
