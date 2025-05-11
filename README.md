@@ -23,7 +23,7 @@ This project implements a simple LoRa receiver using the ESP32-S3 microcontrolle
 
 - **ESP32-S3** (e.g., ESP32-S3-N16R8).
 - **LoRa Module** (e.g., SX1278 or SX1276) connected via SPI.
-- **LED** connected to GPIO2 (or another available GPIO) for visual indication (optional).
+- **LED** connected to **GPIO2** (or another available GPIO) for visual indication (optional). If your ESP32-S3 has a built-in LED, it is typically connected to GPIO2.
 
 ### LoRa Pin Mapping
 
