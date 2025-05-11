@@ -1,4 +1,5 @@
-# LoRa Receiver with (ESP32-S3-N16R8 + Ra-01)
+# LoRa Receiver with ESP32-S3
+### ESP32-S3-N16R8 + LoRa Ra-01
 
 This project implements a simple LoRa receiver using the ESP32-S3 microcontroller and a LoRa module (typically an SX127x based module). The receiver listens for incoming LoRa packets and displays the received data along with the signal strength (RSSI) in the Serial Monitor.
 
