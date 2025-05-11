@@ -1,52 +1,56 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-// Define GPIO pins
-#define LORA_SCK    12  // GPIO12
-#define LORA_MISO   11  // GPIO11
-#define LORA_MOSI   10  // GPIO10
-#define LORA_SS     9   // GPIO9 (NSS)
-#define LORA_RST    46  // GPIO46 (Reset)
-#define LORA_DIO0   3   // GPIO3 (Interrupt)
+// GPIO definitions
+#define LORA_SCK    12
+#define LORA_MISO   11
+#define LORA_MOSI   10
+#define LORA_SS     9
+#define LORA_RST    46
+#define LORA_DIO0   3
 
-// Test SPI transfer data
 #define TEST_SPI_DATA 0xAA
+
+uint8_t lastOpMode = 0xFF;  // Track last mode for change detection
 
 void setup() {
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.println("Starting GPIO diagnostic...");
+  Serial.println("=== Booting LoRa Receiver ===");
+  configure_gpio_defaults();
+  delay(300);
+
   diagnostic_gpio();
 
-  // Reset the LoRa module
+  // Reset LoRa
   Serial.println("Resetting LoRa module...");
   pinMode(LORA_RST, OUTPUT);
   digitalWrite(LORA_RST, LOW);
-  delay(100);  // Keep low for 100 ms
+  delay(150);
   digitalWrite(LORA_RST, HIGH);
-  delay(100);  // Wait after releasing reset
+  delay(200);
   Serial.println("LoRa module reset complete.");
 
-  // Begin SPI communication
+  // Init SPI
+  Serial.println("Initializing SPI...");
   SPI.begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_SS);
+  delay(100);
 
-  // Set LoRa pins
   LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
-
-  // Start LoRa at 433 MHz
+  Serial.println("Starting LoRa...");
   if (!LoRa.begin(433E6)) {
-    Serial.println("LoRa initialization failed. Check wiring.");
-    while (true);  // Halt
+    Serial.println("LoRa init failed. Check wiring.");
+    while (true);
   }
 
-  Serial.println("LoRa Receiver Ready");
-
-  // SPI communication test
+  Serial.println("LoRa Receiver Ready.");
   test_spi();
 }
 
 void loop() {
+  checkLoRaOpMode();
+
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
     Serial.print("Received packet: ");
@@ -57,10 +61,54 @@ void loop() {
     Serial.println(LoRa.packetRssi());
   }
 
-  delay(1000);  // Polling interval
+  delay(500);
 }
 
-// GPIO Diagnostic
+void checkLoRaOpMode() {
+  uint8_t mode = readRegister(0x01) & 0b111;
+  if (mode != lastOpMode) {
+    lastOpMode = mode;
+    switch (mode) {
+      case 0b000:
+        Serial.println("LoRa is in SLEEP mode.");
+        break;
+      case 0b001:
+        Serial.println("LoRa is in STANDBY (idle between receives).");
+        break;
+      case 0b011:
+        Serial.println("LoRa is TRANSMITTING.");
+        break;
+      case 0b100:
+        Serial.println("LoRa is actively listening (RX_CONTINUOUS).");
+        break;
+      default:
+        Serial.print("LoRa OpMode: 0b");
+        Serial.println(mode, BIN);
+        break;
+    }
+  }
+}
+
+// Read register via SPI
+uint8_t readRegister(uint8_t reg) {
+  digitalWrite(LORA_SS, LOW);
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  SPI.transfer(reg & 0x7F);
+  uint8_t val = SPI.transfer(0x00);
+  SPI.endTransaction();
+  digitalWrite(LORA_SS, HIGH);
+  return val;
+}
+
+void configure_gpio_defaults() {
+  pinMode(LORA_SCK, INPUT_PULLDOWN);
+  pinMode(LORA_MISO, INPUT_PULLDOWN);
+  pinMode(LORA_MOSI, INPUT_PULLDOWN);
+  pinMode(LORA_SS, OUTPUT); digitalWrite(LORA_SS, HIGH);
+  pinMode(LORA_RST, OUTPUT); digitalWrite(LORA_RST, HIGH);
+  pinMode(LORA_DIO0, INPUT);
+}
+
 void diagnostic_gpio() {
   check_gpio(LORA_SCK, "SCK");
   check_gpio(LORA_MISO, "MISO");
@@ -71,28 +119,28 @@ void diagnostic_gpio() {
   Serial.println("GPIO diagnostic completed.");
 }
 
-void check_gpio(int pin, String pinName) {
+void check_gpio(int pin, String name) {
   pinMode(pin, INPUT);
+  delay(10);
   int state = digitalRead(pin);
-  Serial.print(pinName);
+  Serial.print(name);
   if (state == LOW) {
-    Serial.println(" pin is LOW (correct).");
+    Serial.println(" pin is LOW (expected).");
   } else {
-    Serial.println(" pin is HIGH (incorrect).");
+    Serial.println(" pin is HIGH (may be floating).");
   }
 }
 
-// SPI Communication Test
 void test_spi() {
-  Serial.println("Testing SPI communication...");
+  Serial.println("Testing SPI...");
   uint8_t received = 0;
 
-  pinMode(LORA_SS, OUTPUT);
   digitalWrite(LORA_SS, HIGH);
-
-  SPI.beginTransaction(SPISettings(100000, MSBFIRST, SPI_MODE0));  // Slow down SPI for reliability
+  SPI.beginTransaction(SPISettings(100000, MSBFIRST, SPI_MODE0));
   digitalWrite(LORA_SS, LOW);
+  delayMicroseconds(10);
   received = SPI.transfer(TEST_SPI_DATA);
+  delayMicroseconds(10);
   digitalWrite(LORA_SS, HIGH);
   SPI.endTransaction();
 
@@ -104,6 +152,6 @@ void test_spi() {
   if (received != 0x00 && received != TEST_SPI_DATA) {
     Serial.println("SPI communication looks active.");
   } else {
-    Serial.println("SPI communication failed. Check wiring.");
+    Serial.println("SPI communication failed. Check NSS and MISO.");
   }
 }
