@@ -39,34 +39,46 @@ void setup() {
   Serial.begin(115200);
   while (!Serial);
 
+  delay(1000);
+  Serial.println(".");
+  delay(1000);
+  Serial.println("..");
+  delay(1000);
+  Serial.println("...");
+  delay(2000);
+  Serial.println("=============================");
   Serial.println("=== Booting LoRa Receiver ===");
+  Serial.println("=============================");
+  delay(2000);
+  Serial.println("Loading ....");
   configure_gpio_defaults();
-  delay(300);
-
-  diagnostic_gpio();
+  delay(10000);
+  diagnostic_gpio();      // GPIO state check
 
   // Reset LoRa
-  Serial.println("Resetting LoRa module...");
+  Serial.println("Resetting LoRa module for the unexpected issue ...");
+  delay(5000);
   pinMode(LORA_RST, OUTPUT);
   digitalWrite(LORA_RST, LOW);
-  delay(150);
+  delay(200);
   digitalWrite(LORA_RST, HIGH);
   delay(200);
   Serial.println("LoRa module reset complete.");
+  Serial.println("Diagnose completed, Press Reset Button to Re-Diagnose.");
+  Serial.println("======================================================");
+  delay(2000);
 
   // Init SPI
   Serial.println("Initializing SPI...");
+  delay(5000);
   SPI.begin(LORA_SCK, LORA_MISO, LORA_MOSI, LORA_SS);
-  delay(100);
-
   LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
-  Serial.println("Starting LoRa...");
+  
   if (!LoRa.begin(433E6)) {
-    Serial.println("LoRa init failed. Check wiring.");
+    Serial.println("SPI communication failed. Check 'Unexpected' wiring Issue.");
+    delay(5000);
     while (true);
   }
-
-  Serial.println("LoRa Receiver Ready.");
   test_spi();
 }
 
@@ -95,7 +107,9 @@ void checkLoRaOpMode() {
         Serial.println("LoRa is in SLEEP mode.");
         break;
       case 0b001:
-        Serial.println("LoRa is in STANDBY (idle between receives).");
+        Serial.println("LoRa is in STANDBY (idle between receives):");
+        delay(1000);
+        Serial.println("Waiting incoming packet from TX ...");
         break;
       case 0b011:
         Serial.println("LoRa is TRANSMITTING.");
@@ -132,13 +146,21 @@ void configure_gpio_defaults() {
 }
 
 void diagnostic_gpio() {
+  Serial.println("");
+  Serial.println("Performing GPIO diagnostic...");
+  delay(3000);
   check_gpio(LORA_SCK, "SCK");
+  delay(750);
   check_gpio(LORA_MISO, "MISO");
+  delay(750);
   check_gpio(LORA_MOSI, "MOSI");
+  delay(750);
   check_gpio(LORA_SS, "NSS");
+  delay(750);
   check_gpio(LORA_RST, "RST");
+  delay(750);
   check_gpio(LORA_DIO0, "DIO0");
-  Serial.println("GPIO diagnostic completed.");
+  delay(1000);
 }
 
 void check_gpio(int pin, String name) {
@@ -149,12 +171,13 @@ void check_gpio(int pin, String name) {
   if (state == LOW) {
     Serial.println(" pin is LOW (expected).");
   } else {
-    Serial.println(" pin is HIGH (may be floating).");
+    Serial.println(" pin is HIGH (unexpected).");
   }
 }
 
 void test_spi() {
-  Serial.println("Testing SPI...");
+  Serial.println("Testing SPI communication...");
+  delay(5000);
   uint8_t received = 0;
 
   digitalWrite(LORA_SS, HIGH);
@@ -170,9 +193,13 @@ void test_spi() {
   Serial.print(TEST_SPI_DATA, HEX);
   Serial.print(" | Received: 0x");
   Serial.println(received, HEX);
+  delay(3000);
 
   if (received != 0x00 && received != TEST_SPI_DATA) {
     Serial.println("SPI communication looks active.");
+    delay(500);
+    Serial.println("LoRa Receiver Ready.");
+    delay(1000);
   } else {
     Serial.println("SPI communication failed. Check NSS and MISO.");
   }
