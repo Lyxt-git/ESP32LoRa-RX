@@ -63,7 +63,7 @@ This project uses the following custom pin mappings for the LoRa module:
    - Go to `Sketch > Include Library > Manage Libraries`.
    - Search for `LoRa` and install the library by **Sandeep Mistry**.
 
-3. **Upload the Code**:
+3. **Upload the Code**: (FOR ESP32-S3Lora-RX Arduino)
    - Connect your ESP32-S3 to your computer.
    - Open the `LoRa Receiver` sketch in Arduino IDE.
    - Select the correct board and port under `Tools > Board` and `Tools > Port`.
