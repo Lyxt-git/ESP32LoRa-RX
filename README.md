@@ -87,39 +87,6 @@ This project uses the following custom pin mappings for the LoRa module:
 - If the receiver isn't picking up packets, ensure that the transmitter is sending on the same frequency (433 MHz in this case).
 - If the RSSI value is low, ensure that the antenna is properly connected and the devices are within range of each other.
 
-# Output sample based on some message and debugging.
-
-- === Booting LoRa Receiver ===
-- SCK pin is LOW (expected).
-- MISO pin is HIGH (may be floating).     << This Could be Floating or Wiring Issue (My breadboard old)
-- MOSI pin is LOW (expected).
-- NSS pin is HIGH (may be floating).      << This Could be Floating or Wiring Issue (My breadboard old)
-- RST pin is HIGH (may be floating).      << This Could be Floating or Wiring Issue (My breadboard old)
-- DIO0 pin is LOW (expected).
-- GPIO diagnostic completed.
-- Resetting LoRa module...
-- LoRa module reset complete.
-- Initializing SPI...
-- Starting LoRa...
-- LoRa Receiver Ready.
-- Testing SPI...
-- Sent: 0xAA | Received: 0x49
-- SPI communication looks active.
-- LoRa is in STANDBY (idle between receives).
-- Received packet: Hello  ESP32-S3Central  RSSI: -50                        << This output line star came from Transmitterwith RSSI
-- Received packet: I am your servant now  RSSI: -51
-- Received packet: This message come from us, the ESP32-S3Rogue  RSSI: -61
-- Received packet: Assalamualaikum  RSSI: -52
-- Received packet: Keep this message for your Infiltration Task  RSSI: -51
-- Received packet: Hello  ESP32-S3Central  RSSI: -53
-- Received packet: I am your servant now  RSSI: -57
-- Received packet: This message come from us, the ESP32-S3Rogue  RSSI: -55
-- Received packet: Assalamualaikum  RSSI: -55
-- Received packet: Keep this message for your Infiltration Task  RSSI: -66
-- Received packet: Hello  ESP32-S3Central  RSSI: -62
-- Received packet: I am your servant now  RSSI: -55
-- Received packet: Assalamualaikum  RSSI: -50
-
 P/S : Tested on Breadboard, the issue on debugging health mostly come from Wiring Issue
 
 ## License
